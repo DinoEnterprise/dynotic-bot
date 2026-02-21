@@ -1,6 +1,6 @@
 export default {
   async fetch(request) {
-    if (request.method !== "POST") return new Response("Dynotic Bot Running 🚀");
+    if (request.method !== "POST") return new Response("Dynotic Bot");
 
     const update = await request.json();
     const message = update.message || update.callback_query;
@@ -19,7 +19,7 @@ export default {
       });
     }
 
-    // Main menu keyboard
+    // Inline keyboards
     const mainMenu = {
       inline_keyboard: [
         [{ text: "Send a track", callback_data: "send_track" }],
@@ -27,15 +27,14 @@ export default {
       ]
     };
 
-    // Back keyboard
     const backButton = {
-      inline_keyboard: [[{ text: "⬅️ Back", callback_data: "main_menu" }]]
+      inline_keyboard: [[{ text: "↩ Back", callback_data: "main_menu" }]]
     };
 
     // Handle /start
     if (message.text === "/start") {
       await sendMessage(chatId,
-        "📋 Menu:\n1️⃣ Send a track — get your personal manager's contact for further collaboration with the label.\n2️⃣ Business request — discuss partnerships and other business matters.",
+        "≔ Menu:\n➀ Send a track — get your personal manager's contact for further collaboration with the label.\n➁ Business Request — discuss partnerships and other business matters.",
         mainMenu
       );
       return new Response("ok");
@@ -46,7 +45,7 @@ export default {
       switch (message.data) {
         case "main_menu":
           await sendMessage(chatId,
-            "📋 Menu:\n1️⃣ Send a track — get your personal manager's contact for further collaboration with the label.\n2️⃣ Business request — discuss partnerships and other business matters.",
+            "≔  Menu:\n➀ Send a track — get your personal manager's contact for further collaboration with the label.\n➁ Business Request — discuss partnerships and other business matters.",
             mainMenu
           );
           break;
