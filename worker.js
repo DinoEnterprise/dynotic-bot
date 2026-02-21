@@ -9,8 +9,9 @@ export default {
     const chatId = message.chat?.id || message.from?.id;
     const TOKEN = "7530674768:AAESh0ejg8lkOPdsjVPVAnojWmMlLkabZMU";
 
+    // Fungsi sendMessage dengan parse_mode HTML
     async function sendMessage(id, text, keyboard = null) {
-      const body = { chat_id: id, text };
+      const body = { chat_id: id, text, parse_mode: "HTML" };
       if (keyboard) body.reply_markup = keyboard;
       await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
         method: "POST",
@@ -34,7 +35,7 @@ export default {
     // Handle /start
     if (message.text === "/start") {
       await sendMessage(chatId,
-        "≔ Menu:\n➀ Send a track — get your personal manager's contact for further collaboration with the label.\n➁ Business Request — discuss partnerships and other business matters.",
+        "≔ <b>Menu</b>:\n➀ <b>Send a track</b> — get your personal manager's contact for further collaboration with the label.\n➁ <b>Business Request</b> — discuss partnerships and other business matters.",
         mainMenu
       );
       return new Response("ok");
@@ -45,19 +46,21 @@ export default {
       switch (message.data) {
         case "main_menu":
           await sendMessage(chatId,
-            "≔  Menu:\n➀ Send a track — get your personal manager's contact for further collaboration with the label.\n➁ Business Request — discuss partnerships and other business matters.",
+            "≔ <b>Menu</b>:\n➀ <b>Send a track</b> — get your personal manager's contact for further collaboration with the label.\n➁ <b>Business Request</b> — discuss partnerships and other business matters.",
             mainMenu
           );
           break;
+
         case "send_track":
           await sendMessage(chatId,
-            "Your manager: @hydarryl\nSend him the demo",
+            "Your manager: <b>@hydarryl</b>\nSend him the demo",
             backButton
           );
           break;
+
         case "business_request":
           await sendMessage(chatId,
-            "Coming soon",
+            "<b>Coming soon</b>",
             backButton
           );
           break;
