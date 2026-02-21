@@ -1,0 +1,4 @@
+name = "dynotic-bot"
+compatibility_date = "2026-02-21"
+type = "javascript"
+main = "worker.js"
