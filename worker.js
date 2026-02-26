@@ -1,5 +1,23 @@
 export default {
   async fetch(request) {
+    const TOKEN = "7530674768:AAESh0ejg8lkOPdsjVPVAnojWmMlLkabZMU";
+    const CHAT_ID = "8285810924"; // chat kamu terima register
+
+    // Jika request dari website register
+    if (request.method === "POST" && request.headers.get("Origin") === "https://dynotic.web.id") {
+      const data = await request.json();
+      const { fullname, email, youtube, instagram } = data;
+
+      const message = encodeURIComponent(
+        `New Registration Dynotic Collective:\nName: ${fullname}\nEmail: ${email}\nYouTube: ${youtube}\nInstagram: ${instagram}\nTime: ${new Date().toISOString()}`
+      );
+
+      await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`);
+
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }
+
+    // === Bagian bot Telegram ===
     if (request.method !== "POST") return new Response("Dynotic Bot");
 
     const update = await request.json();
@@ -7,9 +25,7 @@ export default {
     if (!message) return new Response("ok");
 
     const chatId = message.chat?.id || message.from?.id;
-    const TOKEN = "7530674768:AAESh0ejg8lkOPdsjVPVAnojWmMlLkabZMU";
 
-    // Fungsi sendMessage dengan parse_mode HTML
     async function sendMessage(id, text, keyboard = null) {
       const body = { chat_id: id, text, parse_mode: "HTML" };
       if (keyboard) body.reply_markup = keyboard;
@@ -20,7 +36,6 @@ export default {
       });
     }
 
-    // Inline keyboards
     const mainMenu = {
       inline_keyboard: [
         [{ text: "Send a track", callback_data: "send_track" }],
@@ -32,37 +47,27 @@ export default {
       inline_keyboard: [[{ text: "↩ Back", callback_data: "main_menu" }]]
     };
 
-    // Handle /start
     if (message.text === "/start") {
       await sendMessage(chatId,
-        "≔ <b>Menu</b>:\n➀ <b>Send a track</b> — get your personal manager's contact for further collaboration with the label.\n➁ <b>Business Request</b> — discuss partnerships and other business matters.",
+        "≔ <b>Menu</b>:\n➀ <b>Send a track</b> — get your personal manager's contact.\n➁ <b>Business Request</b> — discuss partnerships.",
         mainMenu
       );
       return new Response("ok");
     }
 
-    // Handle button clicks
     if (message.data) {
       switch (message.data) {
         case "main_menu":
           await sendMessage(chatId,
-            "≔ <b>Menu</b>:\n➀ <b>Send a track</b> — get your personal manager's contact for further collaboration with the label.\n➁ <b>Business Request</b> — discuss partnerships and other business matters.",
+            "≔ <b>Menu</b>:\n➀ <b>Send a track</b> — get your personal manager's contact.\n➁ <b>Business Request</b> — discuss partnerships.",
             mainMenu
           );
           break;
-
         case "send_track":
-          await sendMessage(chatId,
-            "Your manager: <b>@hydarryl</b>\nSend him the demo",
-            backButton
-          );
+          await sendMessage(chatId, "Your manager: <b>@hydarryl</b>\nSend him the demo", backButton);
           break;
-
         case "business_request":
-          await sendMessage(chatId,
-            "<b>Coming soon</b>",
-            backButton
-          );
+          await sendMessage(chatId, "<b>Coming soon</b>", backButton);
           break;
       }
       return new Response("ok");
