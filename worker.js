@@ -4,7 +4,7 @@ export default {
     const CHAT_ID = "8285810924"; // chat kamu terima register
 
     // Jika request dari website register
-    if (request.method === "POST" && request.headers.get("Origin") === "https://dynotic.web.id") {
+    if (request.method === "POST") {
       const data = await request.json();
       const { fullname, email, youtube, instagram } = data;
 
